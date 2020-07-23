@@ -14,8 +14,8 @@ class CartItem extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function productSku()
+    public function product()
     {
-        return $this->belongsTo(ProductSku::class);
+        return $this->belongsTo(Product::class);
     }
 }

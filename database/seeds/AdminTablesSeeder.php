@@ -25,7 +25,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 0,
-                    "order" => 6,
+                    "order" => 5,
                     "title" => "系统管理",
                     "icon" => "fa-tasks",
                     "uri" => NULL,
@@ -33,7 +33,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 2,
-                    "order" => 7,
+                    "order" => 6,
                     "title" => "管理员",
                     "icon" => "fa-users",
                     "uri" => "auth/users",
@@ -41,7 +41,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 2,
-                    "order" => 8,
+                    "order" => 7,
                     "title" => "角色",
                     "icon" => "fa-user",
                     "uri" => "auth/roles",
@@ -49,7 +49,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 2,
-                    "order" => 9,
+                    "order" => 8,
                     "title" => "权限",
                     "icon" => "fa-ban",
                     "uri" => "auth/permissions",
@@ -57,7 +57,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 2,
-                    "order" => 10,
+                    "order" => 9,
                     "title" => "菜单",
                     "icon" => "fa-bars",
                     "uri" => "auth/menu",
@@ -65,7 +65,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 2,
-                    "order" => 11,
+                    "order" => 10,
                     "title" => "操作日志",
                     "icon" => "fa-history",
                     "uri" => "auth/logs",
@@ -73,7 +73,7 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 0,
-                    "order" => 2,
+                    "order" => 4,
                     "title" => "用户管理",
                     "icon" => "fa-users",
                     "uri" => "/users",
@@ -81,26 +81,18 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "parent_id" => 0,
-                    "order" => 3,
-                    "title" => "商品管理",
+                    "order" => 2,
+                    "title" => "货品管理",
                     "icon" => "fa-cubes",
                     "uri" => "/products",
                     "permission" => NULL
                 ],
                 [
                     "parent_id" => 0,
-                    "order" => 4,
-                    "title" => "订单管理",
-                    "icon" => "fa-cny",
+                    "order" => 3,
+                    "title" => "出库单管理",
+                    "icon" => "fa-cart-arrow-down",
                     "uri" => "/orders",
-                    "permission" => NULL
-                ],
-                [
-                    "parent_id" => 0,
-                    "order" => 5,
-                    "title" => "优惠券管理",
-                    "icon" => "fa-tags",
-                    "uri" => "/coupon_codes",
                     "permission" => NULL
                 ]
             ]
@@ -140,28 +132,10 @@ class AdminTablesSeeder extends Seeder
                     "http_path" => "/auth/roles\r\n/auth/permissions\r\n/auth/menu\r\n/auth/logs"
                 ],
                 [
-                    "name" => "用户管理",
+                    "name" => "员工管理",
                     "slug" => "users",
                     "http_method" => "",
                     "http_path" => "/users*"
-                ],
-                [
-                    "name" => "商品管理",
-                    "slug" => "products",
-                    "http_method" => "",
-                    "http_path" => "/products*"
-                ],
-                [
-                    "name" => "优惠券管理",
-                    "slug" => "coupon_codes",
-                    "http_method" => "",
-                    "http_path" => "/coupon_codes*"
-                ],
-                [
-                    "name" => "订单管理",
-                    "slug" => "orders",
-                    "http_method" => "",
-                    "http_path" => "/orders*"
                 ]
             ]
         );
@@ -174,8 +148,8 @@ class AdminTablesSeeder extends Seeder
                     "slug" => "administrator"
                 ],
                 [
-                    "name" => "运营",
-                    "slug" => "operation"
+                    "name" => "仓库管理员",
+                    "slug" => "manager"
                 ]
             ]
         );
@@ -200,31 +174,11 @@ class AdminTablesSeeder extends Seeder
                 ],
                 [
                     "role_id" => 2,
-                    "permission_id" => 2
-                ],
-                [
-                    "role_id" => 2,
                     "permission_id" => 3
                 ],
                 [
                     "role_id" => 2,
-                    "permission_id" => 4
-                ],
-                [
-                    "role_id" => 2,
                     "permission_id" => 6
-                ],
-                [
-                    "role_id" => 2,
-                    "permission_id" => 7
-                ],
-                [
-                    "role_id" => 2,
-                    "permission_id" => 8
-                ],
-                [
-                    "role_id" => 2,
-                    "permission_id" => 9
                 ]
             ]
         );

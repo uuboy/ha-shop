@@ -20,11 +20,8 @@ class ProductsController extends Controller
             // 模糊搜索商品标题、商品详情、SKU 标题、SKU描述
             $builder->where(function ($query) use ($like) {
                 $query->where('title', 'like', $like)
-                    ->orWhere('description', 'like', $like)
-                    ->orWhereHas('skus', function ($query) use ($like) {
-                        $query->where('title', 'like', $like)
-                            ->orWhere('description', 'like', $like);
-                    });
+                    ->orWhere('type', 'like', $like)
+                    ->orWhere('location', 'like', $like);
             });
         }
 
@@ -34,7 +31,7 @@ class ProductsController extends Controller
             // 是否是以 _asc 或者 _desc 结尾
             if (preg_match('/^(.+)_(asc|desc)$/', $order, $m)) {
                 // 如果字符串的开头是这 3 个字符串之一，说明是一个合法的排序值
-                if (in_array($m[1], ['price', 'sold_count', 'rating'])) {
+                if (in_array($m[1], ['title', 'type', 'location'])) {
                     // 根据传入的排序值来构造排序参数
                     $builder->orderBy($m[1], $m[2]);
                 }
@@ -66,19 +63,11 @@ class ProductsController extends Controller
             $favored = boolval($user->favoriteProducts()->find($product->id));
         }
 
-        $reviews = OrderItem::query()
-            ->with(['order.user', 'productSku']) // 预先加载关联关系
-            ->where('product_id', $product->id)
-            ->whereNotNull('reviewed_at') // 筛选出已评价的
-            ->orderBy('reviewed_at', 'desc') // 按评价时间倒序
-            ->limit(10) // 取出 10 条
-            ->get();
 
         // 最后别忘了注入到模板中
         return view('products.show', [
             'product' => $product,
             'favored' => $favored,
-            'reviews' => $reviews
         ]);
     }
 

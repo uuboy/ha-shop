@@ -12,17 +12,12 @@
                         <div class="col-3 product-item">
                             <div class="product-content">
                                 <div class="top">
-                                    <div class="img">
-                                        <a href="{{ route('products.show', ['product' => $product->id]) }}">
-                                            <img src="{{ $product->image_url }}" alt="">
-                                        </a>
-                                    </div>
-                                    <div class="price"><b>￥</b>{{ $product->price }}</div>
+                                    <div class="price"><b>规格</b>{{ $product->type }}</div>
                                     <a href="{{ route('products.show', ['product' => $product->id]) }}">{{ $product->title }}</a>
                                 </div>
                                 <div class="bottom">
-                                    <div class="sold_count">销量 <span>{{ $product->sold_count }}笔</span></div>
-                                    <div class="review_count">评价 <span>{{ $product->review_count }}</span></div>
+                                    <div class="sold_count">库存 <span>{{ $product->stock }}件</span></div>
+                                    <div class="review_count">货架号 <span>{{ $product->location }}</span></div>
                                 </div>
                             </div>
                         </div>

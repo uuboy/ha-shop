@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\AddCartRequest;
-use App\Models\ProductSku;
+use App\Models\Product;
 use App\Services\CartService;
 
 class CartController extends Controller
@@ -27,14 +27,14 @@ class CartController extends Controller
 
     public function add(AddCartRequest $request)
     {
-        $this->cartService->add($request->input('sku_id'), $request->input('amount'));
+        $this->cartService->add($request->input('product_id'), $request->input('amount'));
 
         return [];
     }
 
-    public function remove(ProductSku $sku, Request $request)
+    public function remove(Product $product, Request $request)
     {
-        $this->cartService->remove($sku->id);
+        $this->cartService->remove($product->id);
 
         return [];
     }

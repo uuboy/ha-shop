@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Exceptions\InternalException;
 
 class Product extends Model
 {
     protected $fillable = [
         'title',
-        'description',
-        'image',
+        'type',
         'on_sale',
-        'rating',
-        'sold_count',
-        'review_count',
-        'price',
+        'location',
+        'stock',
     ];
 
     protected $casts    = [
@@ -23,17 +21,34 @@ class Product extends Model
     ];
 
     // 与商品SKU关联
-    public function skus()
+    // public function skus()
+    // {
+    //     return $this->hasMany(ProductSku::class);
+    // }
+
+    // public function getImageUrlAttribute()
+    // {
+    //     // 如果 image 字段本身就已经是完整的 url 就直接返回
+    //     if (Str::startsWith($this->attributes['image'], ['http://', 'https://'])) {
+    //         return $this->attributes['image'];
+    //     }
+    //     return \Storage::disk('public')->url($this->attributes['image']);
+    // }
+
+    public function decreaseStock($amount)
     {
-        return $this->hasMany(ProductSku::class);
+        if ($amount < 0) {
+            throw new InternalException('减库存不可小于0');
+        }
+
+        return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
     }
 
-    public function getImageUrlAttribute()
+    public function addStock($amount)
     {
-        // 如果 image 字段本身就已经是完整的 url 就直接返回
-        if (Str::startsWith($this->attributes['image'], ['http://', 'https://'])) {
-            return $this->attributes['image'];
+        if ($amount < 0) {
+            throw new InternalException('加库存不可小于0');
         }
-        return \Storage::disk('public')->url($this->attributes['image']);
+        $this->increment('stock', $amount);
     }
 }

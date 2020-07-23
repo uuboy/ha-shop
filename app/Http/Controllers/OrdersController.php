@@ -21,10 +21,10 @@ class OrdersController extends Controller
     {
         $orders = Order::query()
             // 使用 with 方法预加载，避免N + 1问题
-            ->with(['items.product', 'items.productSku'])
+            ->with(['items.product'])
             ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc')
-            ->paginate();
+            ->paginate(5);
 
         return view('orders.index', ['orders' => $orders]);
     }
@@ -33,23 +33,23 @@ class OrdersController extends Controller
     {
         $user    = $request->user();
         $address = UserAddress::find($request->input('address_id'));
-        $coupon  = null;
+        // $coupon  = null;
 
         // 如果用户提交了优惠码
-        if ($code = $request->input('coupon_code')) {
-            $coupon = CouponCode::where('code', $code)->first();
-            if (!$coupon) {
-                throw new CouponCodeUnavailableException('优惠券不存在');
-            }
-        }
+        // if ($code = $request->input('coupon_code')) {
+        //     $coupon = CouponCode::where('code', $code)->first();
+        //     if (!$coupon) {
+        //         throw new CouponCodeUnavailableException('优惠券不存在');
+        //     }
+        // }
         // 参数中加入 $coupon 变量
-        return $orderService->store($user, $address, $request->input('remark'), $request->input('items'), $coupon);
+        return $orderService->store($user, $address, $request->input('remark'), $request->input('items'), $request->input('is_out'));
     }
 
     public function show(Order $order, Request $request)
     {
         $this->authorize('own', $order);
-        return view('orders.show', ['order' => $order->load(['items.productSku', 'items.product'])]);
+        return view('orders.show', ['order' => $order->load(['items.product'])]);
     }
 
     public function received(Order $order, Request $request)
@@ -67,6 +67,38 @@ class OrdersController extends Controller
 
         // 返回订单信息
         return $order;
+    }
+
+    public function close(Order $order, Request $request)
+    {
+        $order->update(['closed' => true]);
+            // 循环遍历订单中的商品 SKU，将订单中的数量加回到 库存中去
+            if($order->is_out) {
+                foreach ($order->items as $item) {
+                    $item->product->addStock($item->amount);
+                }
+            } else {
+                foreach ($order->items as $item) {
+                    $item->product->decreaseStock($item->amount);
+                }
+            }
+
+
+    }
+
+    public function restore(Order $order, Request $request)
+    {
+        $order->update(['closed' => false]);
+            // 循环遍历订单中的商品 SKU，将订单中的数量加回到 SKU 的库存中去
+            if($order->is_out) {
+                foreach ($order->items as $item) {
+                    $item->product->decreaseStock($item->amount);
+                }
+            } else {
+                foreach ($order->items as $item) {
+                    $item->product->addStock($item->amount);
+                }
+            }
     }
 
     public function review(Order $order)

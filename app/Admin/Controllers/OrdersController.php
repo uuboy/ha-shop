@@ -22,18 +22,15 @@ class OrdersController extends AdminController
     {
         $grid = new Grid(new Order);
 
-        // 只展示已支付的订单，并且默认按支付时间倒序排序
-        $grid->model()->whereNotNull('paid_at')->orderBy('paid_at', 'desc');
 
-        $grid->no('订单流水号');
+
+        $grid->no('出库单流水号')->sortable();
         // 展示关联关系的字段时，使用 column 方法
-        $grid->column('user.name', '买家');
-        $grid->total_amount('总金额')->sortable();
-        $grid->paid_at('支付时间')->sortable();
+        $grid->column('user.name', '操作员');
         $grid->ship_status('物流')->display(function($value) {
             return Order::$shipStatusMap[$value];
         });
-        $grid->refund_status('退款状态')->display(function($value) {
+        $grid->refund_status('退货状态')->display(function($value) {
             return Order::$refundStatusMap[$value];
         });
         // 禁用创建按钮，后台不需要创建订单
@@ -63,10 +60,7 @@ class OrdersController extends AdminController
 
     public function ship(Order $order, Request $request)
     {
-        // 判断当前订单是否已支付
-        if (!$order->paid_at) {
-            throw new InvalidRequestException('该订单未付款');
-        }
+
         // 判断当前订单发货状态是否为未发货
         if ($order->ship_status !== Order::SHIP_STATUS_PENDING) {
             throw new InvalidRequestException('该订单已发货');

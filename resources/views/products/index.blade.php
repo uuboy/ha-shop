@@ -11,19 +11,20 @@
                     <div class="form-row">
                         <div class="col-md-9">
                             <div class="form-row">
-                                <div class="col-auto"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
+                                <div class="col-6"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
                                 <div class="col-auto"><button class="btn btn-primary btn-sm">搜索</button></div>
+                                <div class="col-auto"><a href="{{ route('products.index') }}">清除</a></div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <select name="order" class="form-control form-control-sm float-right">
                                 <option value="">排序方式</option>
-                                <option value="price_asc">价格从低到高</option>
-                                <option value="price_desc">价格从高到低</option>
-                                <option value="sold_count_desc">销量从高到低</option>
-                                <option value="sold_count_asc">销量从低到高</option>
-                                <option value="rating_desc">评价从高到低</option>
-                                <option value="rating_asc">评价从低到高</option>
+                                <option value="title_asc">名称升序排列</option>
+                                <option value="title_desc">名称降序排列</option>
+                                <option value="type_asc">规格升序排列</option>
+                                <option value="type_desc">规格降序排列</option>
+                                <option value="location_asc">货架号升序排列</option>
+                                <option value="location_desc">货架号降序排列</option>
                             </select>
                         </div>
                     </div>
@@ -36,17 +37,16 @@
                                 <div class="top">
                                     <div class="img">
                                         <a href="{{ route('products.show', ['product' => $product->id]) }}">
-                                            <img src="{{ $product->image_url }}" alt="">
                                         </a>
                                     </div>
-                                    <div class="price"><b>￥</b>{{ $product->price }}</div>
+                                    <div class="price"><b>规格：</b>{{ $product->type }}</div>
                                     <div class="title">
                                         <a href="{{ route('products.show', ['product' => $product->id]) }}">{{ $product->title }}</a>
                                     </div>
                                 </div>
                                 <div class="bottom">
-                                    <div class="sold_count">销量 <span>{{ $product->sold_count }}笔</span></div>
-                                    <div class="review_count">评价 <span>{{ $product->review_count }}</span></div>
+                                    <div class="sold_count">库存 <span>{{ $product->stock }}件</span></div>
+                                    <div class="review_count">货架号 <span>{{ $product->location }}</span></div>
                                 </div>
                             </div>
                         </div>
@@ -69,5 +69,7 @@
             $('.search-form').submit();
         });
     })
+
+
 </script>
 @endsection

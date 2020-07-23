@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
-    protected $fillable = ['amount', 'price', 'rating', 'review', 'reviewed_at'];
-    protected $dates = ['reviewed_at'];
+    protected $fillable = ['amount'];
     public $timestamps = false;
 
     public function product()
@@ -15,10 +14,6 @@ class OrderItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function productSku()
-    {
-        return $this->belongsTo(ProductSku::class);
-    }
 
     public function order()
     {

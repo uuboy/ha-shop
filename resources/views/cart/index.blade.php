@@ -5,43 +5,38 @@
 <div class="row">
     <div class="col-lg-10 offset-lg-1">
         <div class="card">
-            <div class="card-header">我的购物车</div>
+            <div class="card-header">我的清单</div>
             <div class="card-body">
                 <table class="table table-striped">
                     <thead>
                     <tr>
                         <th><input type="checkbox" id="select-all"></th>
-                        <th>商品信息</th>
-                        <th>单价</th>
+                        <th>货品信息</th>
+                        <th>货架号</th>
                         <th>数量</th>
                         <th>操作</th>
                     </tr>
                     </thead>
                     <tbody class="product_list">
                     @foreach($cartItems as $item)
-                        <tr data-id="{{ $item->productSku->id }}">
+                        <tr data-id="{{ $item->product->id }}">
                             <td>
-                                <input type="checkbox" name="select" value="{{ $item->productSku->id }}" {{ $item->productSku->product->on_sale ? 'checked' : 'disabled' }}>
+                                <input type="checkbox" name="select" value="{{ $item->id }}" {{ $item->product->on_sale ? 'checked' : 'disabled' }}>
                             </td>
                             <td class="product_info">
-                                <div class="preview">
-                                    <a target="_blank" href="{{ route('products.show', [$item->productSku->product_id]) }}">
-                                        <img src="{{ $item->productSku->product->image_url }}">
-                                    </a>
-                                </div>
-                                <div @if(!$item->productSku->product->on_sale) class="not_on_sale" @endif>
+                                <div @if(!$item->product->on_sale) class="not_on_sale" @endif>
           <span class="product_title">
-            <a target="_blank" href="{{ route('products.show', [$item->productSku->product_id]) }}">{{ $item->productSku->product->title }}</a>
+            <a target="_blank" href="{{ route('products.show', [$item->product_id]) }}">名称：{{ $item->product->title }}</a>
           </span>
-                                    <span class="sku_title">{{ $item->productSku->title }}</span>
-                                    @if(!$item->productSku->product->on_sale)
-                                        <span class="warning">该商品已下架</span>
+                                    <span class="sku_title">规格：{{ $item->product->type }}</span>
+                                    @if(!$item->product->on_sale)
+                                        <span class="warning">该货品已下架</span>
                                     @endif
                                 </div>
                             </td>
-                            <td><span class="price">￥{{ $item->productSku->price }}</span></td>
+                            <td><span class="price">{{ $item->product->location }}</span></td>
                             <td>
-                                <input type="text" class="form-control form-control-sm amount" @if(!$item->productSku->product->on_sale) disabled @endif name="amount" value="{{ $item->amount }}">
+                                <input type="text" class="form-control form-control-sm amount" @if(!$item->product->on_sale) disabled @endif name="amount" value="{{ $item->amount }}">
                             </td>
                             <td>
                                 <button class="btn btn-sm btn-danger btn-remove">移除</button>
@@ -54,7 +49,16 @@
                 <div>
                     <form class="form-horizontal" role="form" id="order-form">
                         <div class="form-group row">
-                            <label class="col-form-label col-sm-3 text-md-right">选择收货地址</label>
+                            <label class="col-form-label col-sm-3 text-md-right">选择单据类型</label>
+                            <div class="col-sm-9 col-md-7">
+                                <select class="form-control" name="is_out">
+                                    <option value="1">出库</option>
+                                    <option value="0">入库</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-sm-3 text-md-right">选择对方单位</label>
                             <div class="col-sm-9 col-md-7">
                                 <select class="form-control" name="address">
                                     @foreach($addresses as $address)
@@ -69,22 +73,9 @@
                                 <textarea name="remark" class="form-control" rows="3"></textarea>
                             </div>
                         </div>
-                        <!-- 优惠码开始 -->
-                        <div class="form-group row">
-                            <label class="col-form-label col-sm-3 text-md-right">优惠码</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" name="coupon_code">
-                                <span class="form-text text-muted" id="coupon_desc"></span>
-                            </div>
-                            <div class="col-sm-3">
-                                <button type="button" class="btn btn-success" id="btn-check-coupon">检查</button>
-                                <button type="button" class="btn btn-danger" style="display: none;" id="btn-cancel-coupon">取消</button>
-                            </div>
-                        </div>
-                        <!-- 优惠码结束 -->
                         <div class="form-group">
                             <div class="offset-sm-3 col-sm-3">
-                                <button type="button" class="btn btn-primary btn-create-order">提交订单</button>
+                                <button type="button" class="btn btn-primary btn-create-order">提交</button>
                             </div>
                         </div>
                     </form>
@@ -139,9 +130,10 @@
             // 构建请求参数，将用户选择的地址的 id 和备注内容写入请求参数
             var req = {
                 address_id: $('#order-form').find('select[name=address]').val(),
+                is_out: $('#order-form').find('select[name=is_out]').val(),
                 items: [],
                 remark: $('#order-form').find('textarea[name=remark]').val(),
-                coupon_code: $('input[name=coupon_code]').val(), // 从优惠码输入框中获取优惠码
+                // coupon_code: $('input[name=coupon_code]').val(), // 从优惠码输入框中获取优惠码
             };
             // 遍历 <table> 标签内所有带有 data-id 属性的 <tr> 标签，也就是每一个购物车中的商品 SKU
             $('table tr[data-id]').each(function () {
@@ -159,7 +151,7 @@
                 }
                 // 把 SKU id 和数量存入请求参数数组中
                 req.items.push({
-                    sku_id: $(this).data('id'),
+                    product_id: $(this).data('id'),
                     amount: $input.val(),
                 })
             });

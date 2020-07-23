@@ -34,31 +34,24 @@ class Order extends Model
     protected $fillable = [
         'no',
         'address',
-        'total_amount',
         'remark',
-        'paid_at',
-        'payment_method',
-        'payment_no',
         'refund_status',
         'refund_no',
         'closed',
-        'reviewed',
         'ship_status',
         'ship_data',
         'extra',
+        'is_out',
     ];
 
     protected $casts = [
         'closed'    => 'boolean',
-        'reviewed'  => 'boolean',
+        'is_out'    => 'boolean',
         'address'   => 'json',
         'ship_data' => 'json',
         'extra'     => 'json',
     ];
 
-    protected $dates = [
-        'paid_at',
-    ];
 
     protected static function boot()
     {
@@ -87,10 +80,6 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function couponCode()
-    {
-        return $this->belongsTo(CouponCode::class);
-    }
 
     public static function findAvailableNo()
     {
