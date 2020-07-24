@@ -13,7 +13,7 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th>收货人</th>
+                            <th>收货人（单位）</th>
                             <th>地址</th>
                             <th>邮编</th>
                             <th>电话</th>
@@ -36,9 +36,11 @@
                         @endforeach
                         </tbody>
                     </table>
+                    <div class="float-right">{{ $addresses->render() }}</div>
                 </div>
             </div>
         </div>
+
     </div>
 @endsection
 

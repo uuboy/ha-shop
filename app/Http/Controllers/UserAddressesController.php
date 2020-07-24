@@ -10,9 +10,8 @@ class UserAddressesController extends Controller
 {
     public function index(Request $request)
     {
-        return view('user_addresses.index', [
-            'addresses' => $request->user()->addresses,
-        ]);
+        $addresses = UserAddress::paginate(5);
+        return view('user_addresses.index', compact('addresses'));
     }
 
     public function create()
@@ -22,7 +21,7 @@ class UserAddressesController extends Controller
 
     public function store(UserAddressRequest $request)
     {
-        $request->user()->addresses()->create($request->only([
+        UserAddress::create($request->only([
             'province',
             'city',
             'district',
@@ -37,14 +36,12 @@ class UserAddressesController extends Controller
 
     public function edit(UserAddress $user_address)
     {
-        $this->authorize('own', $user_address);
 
         return view('user_addresses.create_and_edit', ['address' => $user_address]);
     }
 
     public function update(UserAddress $user_address, UserAddressRequest $request)
     {
-        $this->authorize('own', $user_address);
 
         $user_address->update($request->only([
             'province',
@@ -61,7 +58,6 @@ class UserAddressesController extends Controller
 
     public function destroy(UserAddress $user_address)
     {
-        $this->authorize('own', $user_address);
 
         $user_address->delete();
 

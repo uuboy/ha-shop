@@ -60,9 +60,9 @@
                         <div class="form-group row">
                             <label class="col-form-label col-sm-3 text-md-right">选择对方单位</label>
                             <div class="col-sm-9 col-md-7">
-                                <select class="form-control" name="address">
+                                <select class="form-control" name="address" id='mySelect'>
                                     @foreach($addresses as $address)
-                                        <option value="{{ $address->id }}">{{ $address->full_address }} {{ $address->contact_name }} {{ $address->contact_phone }}</option>
+                                        <option value="{{ $address->id }}">{{ $address->contact_name }} {{ $address->full_address }} {{ $address->contact_phone }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -87,9 +87,14 @@
 </div>
 @endsection
 
+@section('style')
+<link href="{{ asset('select2/select2.min.css') }}" rel="stylesheet">
+@endsection
 @section('scriptsAfterJs')
+<script src="{{ asset('select2/select2.min.js') }}"></script>
 <script>
     $(document).ready(function () {
+        $('#mySelect').select2();
         // 监听 移除 按钮的点击事件
         $('.btn-remove').click(function () {
             // $(this) 可以获取到当前点击的 移除 按钮的 jQuery 对象
@@ -129,7 +134,7 @@
         $('.btn-create-order').click(function () {
             // 构建请求参数，将用户选择的地址的 id 和备注内容写入请求参数
             var req = {
-                address_id: $('#order-form').find('select[name=address]').val(),
+                address_id: $('#order-form').find("select[name=address]").val(),
                 is_out: $('#order-form').find('select[name=is_out]').val(),
                 items: [],
                 remark: $('#order-form').find('textarea[name=remark]').val(),
@@ -179,45 +184,7 @@
                         swal('系统错误', '', 'error');
                     }
                 });
+            });
         });
-        // 检查按钮点击事件
-        $('#btn-check-coupon').click(function () {
-            // 获取用户输入的优惠码
-            var code = $('input[name=coupon_code]').val();
-            // 如果没有输入则弹框提示
-            if(!code) {
-                swal('请输入优惠码', '', 'warning');
-                return;
-            }
-            // 调用检查接口
-            axios.get('/coupon_codes/' + encodeURIComponent(code))
-                .then(function (response) {  // then 方法的第一个参数是回调，请求成功时会被调用
-                    $('#coupon_desc').text(response.data.description); // 输出优惠信息
-                    $('input[name=coupon_code]').prop('readonly', true); // 禁用输入框
-                    $('#btn-cancel-coupon').show(); // 显示 取消 按钮
-                    $('#btn-check-coupon').hide(); // 隐藏 检查 按钮
-                }, function (error) {
-                    // 如果返回码是 404，说明优惠券不存在
-                    if(error.response.status === 404) {
-                        swal('优惠码不存在', '', 'error');
-                    } else if (error.response.status === 403) {
-                        // 如果返回码是 403，说明有其他条件不满足
-                        swal(error.response.data.msg, '', 'error');
-                    } else {
-                        // 其他错误
-                        swal('系统内部错误', '', 'error');
-                    }
-                })
-        });
-
-        // 隐藏 按钮点击事件
-        $('#btn-cancel-coupon').click(function () {
-            $('#coupon_desc').text(''); // 隐藏优惠信息
-            $('input[name=coupon_code]').prop('readonly', false);  // 启用输入框
-            $('#btn-cancel-coupon').hide(); // 隐藏 取消 按钮
-            $('#btn-check-coupon').show(); // 显示 检查 按钮
-        });
-
-    });
 </script>
 @endsection

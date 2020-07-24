@@ -9,6 +9,7 @@
     <title>@yield('title', 'Laravel Shop') - Laravel 电商教程</title>
     <!-- 样式 -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    @yield('style')
 </head>
 <body>
 <div id="app" class="{{ route_class() }}-page">
