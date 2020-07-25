@@ -65,7 +65,7 @@ class ProductsController extends AdminController
         $form->text('location', '货架号')->rules('required');
 
 
-        $form->text('stock', '库存数量')->rules('required|numeric|min:0')->default(0);
+        $form->text('stock', '库存数量')->rules('required|numeric')->default(0);
 
         // 创建一组单选框
         $form->radio('on_sale', '上架')->options(['1' => '是', '0'=> '否'])->default('1');

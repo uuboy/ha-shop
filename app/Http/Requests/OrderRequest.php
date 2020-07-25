@@ -25,17 +25,10 @@ class OrderRequest extends Request
                                       if (!$product->on_sale) {
                                           return $fail('该商品未上架');
                                       }
-                                      if ($product->stock === 0) {
-                                          return $fail('该商品已售完');
-                                      }
+
                                       // 获取当前索引
                                       preg_match('/items\.(\d+)\.product_id/', $attribute, $m);
                                       $index = $m[1];
-                                      // 根据索引找到用户所提交的购买数量
-                                      $amount = $this->input('items')[$index]['amount'];
-                                      if ($amount > 0 && $amount > $product->stock) {
-                                          return $fail('该商品库存不足');
-                                      }
                                   },
             ],
             'items.*.amount' => ['required', 'integer', 'min:1'],

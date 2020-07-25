@@ -5,62 +5,113 @@
 <div class="row">
     <div class="col-lg-10 offset-lg-1">
         <div class="card">
-            <div class="card-header">订单列表</div>
+            <div class="card-header">出入库流水单</div>
             <div class="card-body">
-                <ul class="list-group">
+                <!-- 筛选组件开始 -->
+                <form action="{{ route('orders.index') }}" class="search-form">
+                    <div class="form-row">
+                        <div class="col-md-9">
+                            <div class="form-row">
+                                <div class="col-6"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
+                                <div class="col-auto"><button class="btn btn-primary btn-sm">搜索</button></div>
+                                <div class="col-auto"><a href="{{ route('orders.index') }}">清除</a></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="order" class="form-control form-control-sm float-right">
+                                <option value="">排序方式</option>
+                                <option value="title_asc">名称升序排列</option>
+                                <option value="title_desc">名称降序排列</option>
+                                <option value="type_asc">规格升序排列</option>
+                                <option value="type_desc">规格降序排列</option>
+                                <option value="location_asc">货架号升序排列</option>
+                                <option value="location_desc">货架号降序排列</option>
+                                <option value="stock_asc">库存升序排列</option>
+                                <option value="stock_desc">库存降序排列</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <ul class="list-group mt-3">
                     @foreach($orders as $order)
                         <li class="list-group-item">
                             <div class="card">
                                 <div class="card-header">
                                     订单号：{{ $order->no }}
-                                    <span class="ml-4">{{ $order->created_at->format('Y-m-d H:i:s') }}</span>
-                                    <span class="float-right">单据类型：@if($order->is_out)出库清单@else入库清单@endif</span>
+                                    <span class="ml-5">{{ $order->created_at->format('Y-m-d H:i:s') }}</span>
+                                    <span class="float-right">单据类型：@if($order->is_out)<span style="color: red;">出库清单</span>@else<span style="color: green;">入库清单</span>@endif</span>
 
                                 </div>
                                 <div class="card-body">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>货品信息</th>
-                                            <th class="text-center">数量</th>
-                                            <th class="text-center">状态</th>
-                                            <th class="text-center">操作</th>
-                                        </tr>
-                                        </thead>
-                                        @foreach($order->items as $index => $item)
-                                            <tr data-id="{{ $order->id }}">
-                                                <td class="product-info">
-                                                        <span class="product-title">
-                                                           <a target="_blank" href="{{ route('products.show', [$item->product_id]) }}">{{ $item->product->title }}</a>
-                                                        </span>
-                                                        <span class="sku-title">{{ $item->product->type }}</span>
-                                                </td>
-                                                <td class="sku-amount text-center">{{ $item->amount }}</td>
-                                                @if($index === 0)
-                                                    <td rowspan="{{ count($order->items) }}" class="text-center">
-                                                        @if($order->closed)
-                                                            已退回
-                                                        @else
-                                                            @if($order->is_out)
-                                                                已出库
-                                                            @else
-                                                                已入库
-                                                            @endif
-                                                        @endif
-                                                    </td>
-                                                    <td rowspan="{{ count($order->items) }}" class="text-center">
-                                                        <a class="btn btn-primary btn-sm" href="{{ route('orders.show', ['order' => $order->id]) }}">查看订单</a>
-                                                        @if($order->closed)
-                                                            <button class="btn btn-success btn-sm btn-restore">订单恢复</button>
-                                                        @else
-                                                            <button class="btn btn-danger btn-sm btn-remove">订单退回</button>
-                                                        @endif
-
-                                                    </td>
-                                                @endif
+                                    <div class="table-responsive-md">
+                                        <table class="table table-sm">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th class="text-center">名称</th>
+                                                <th class="text-center">型号</th>
+                                                <th class="text-center">货架号</th>
+                                                <th class="text-center">数量</th>
+                                                <th class="text-center">状态</th>
+                                                <th class="text-center">操作</th>
                                             </tr>
-                                        @endforeach
-                                    </table>
+                                            </thead>
+                                            @foreach($order->items as $index => $item)
+                                                <tr data-id="{{ $order->id }}">
+                                                    <td class="text-center" @if($order->closed) style="text-decoration: line-through;" @endif>
+                                                        {{ $item->product->title }}
+                                                    </td>
+                                                    <td class="text-center" @if($order->closed) style="text-decoration: line-through;" @endif>
+                                                        {{ $item->product->type }}
+                                                    </td>
+                                                    <td class="text-center" @if($order->closed) style="text-decoration: line-through;" @endif>
+                                                        {{ $item->product->location }}
+                                                    </td>
+                                                    <td class="text-center" @if($order->closed) style="text-decoration: line-through;" @endif>
+                                                        @if($order->is_out)
+                                                            <span style="color: red;">-{{ $item->amount }}</span>
+                                                        @else
+                                                            <span style="color: green;">+{{ $item->amount }}</span>
+                                                        @endif
+                                                    </td>
+                                                    @if($index === 0)
+                                                        <td rowspan="{{ count($order->items) }}" class="text-center">
+                                                            @if($order->closed)
+                                                                <div style="color: red;">订单已关闭</div>
+                                                            @elseif($order->refund_status !== \App\Models\Order::SHIP_STATUS_PENDING)
+                                                                <div style="color: red;">退货状态：{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}</div>
+                                                            @else
+                                                                <div>物流状态：{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }} </div>
+                                                            @endif
+                                                        </td>
+                                                        <td rowspan="{{ count($order->items) }}" class="text-center">
+                                                            <div>
+                                                                <a class="btn btn-primary btn-sm" href="{{ route('orders.show', ['order' => $order->id]) }}">查看订单</a>
+                                                            </div>
+
+                                                            @if($order->closed)
+                                                                <div class="mt-2">
+                                                                    <button class="btn btn-success btn-sm btn-restore" type="button">订单恢复</button>
+                                                                </div>
+                                                            @else
+                                                                <div class="mt-2">
+                                                                    <button class="btn btn-danger btn-sm btn-remove" type="button">订单关闭</button>
+                                                                </div>
+                                                            @endif
+
+                                                        </td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+                                                <tr>
+                                                    <td colspan="6" class="text-center">
+                                                        <b>对方单位：</b>{{ join(' ', $order->address) }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="6"></td>
+                                                </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -83,7 +134,7 @@
             // data('id') 方法可以获取到我们之前设置的 data-id 属性的值，也就是对应的 SKU id
             var id = $(this).closest('tr').data('id');
             swal({
-                title: "确认要将该订单退回？",
+                title: "确认要将该订单关闭？",
                 icon: "warning",
                 buttons: ['取消', '确定'],
                 dangerMode: true,

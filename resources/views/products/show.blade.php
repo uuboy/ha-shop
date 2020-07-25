@@ -8,21 +8,24 @@
             <div class="card-body product-info">
                 <div class="row">
                     <div class="col-12">
-                        <div class="title">{{ $product->title }}</div>
-                        <div class="price"><em>规格：</em><span>{{ $product->type }}</span></div>
+                        <div class="title text-center">货品名称：{{ $product->title }}</div>
                         <div class="sales_and_reviews">
+                            <div class="sold_count">规格 <span class="count">{{ $product->type }}</span></div>
                             <div class="sold_count">库存 <span class="count">{{ $product->stock }}</span></div>
                             <div class="review_count">货架号 <span class="count">{{ $product->location }}</span></div>
                         </div>
-                        <div class="cart_amount"><label>数量</label><input type="text" class="form-control form-control-sm" value="1"><span>件</span></div>
-                        <div class="buttons">
-                            @if($favored)
-                                <button class="btn btn-danger btn-disfavor">取消收藏</button>
-                            @else
-                                <button class="btn btn-success btn-favor">❤ 收藏</button>
-                            @endif
-                            <button class="btn btn-primary btn-add-to-cart">加入清单</button>
+                        <div class="row align-items-center">
+                            <div class="cart_amount col-4"><label>数量</label><input type="text" class="form-control form-control-sm" value="1"><span>件</span></div>
+                            <div class="col-8 text-right">
+                                @if($favored)
+                                    <button class="btn btn-danger btn-disfavor">取消收藏</button>
+                                @else
+                                    <button class="btn btn-success btn-favor">❤ 收藏</button>
+                                @endif
+                                <button class="btn btn-primary btn-add-to-cart ml-4">加入清单</button>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>

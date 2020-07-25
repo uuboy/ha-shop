@@ -357,7 +357,7 @@ body {
         .product-title, .sku-title {
             display: block;
         }
-        .product-title > a {
+        .product-info > a {
             color: #3c3c3c;
         }
         .sku-title {
@@ -381,7 +381,6 @@ body {
             display: flex;
             flex-direction: row;
             .line-label {
-                width: 80px;
                 text-align: right;
             }
             .line-value {

@@ -46,9 +46,7 @@ class OrderService
                 $item->product()->associate($product->id);
                 $item->save();
                 if($order->is_out) {
-                    if ($product->decreaseStock($data['amount']) <= 0) {
-                        throw new InvalidRequestException('该商品库存不足');
-                    }
+                    $product->decreaseStock($data['amount']);
                 } else {
                     $product->addStock($data['amount']);
                 }

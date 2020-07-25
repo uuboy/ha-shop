@@ -31,14 +31,14 @@ class ProductsController extends Controller
             // 是否是以 _asc 或者 _desc 结尾
             if (preg_match('/^(.+)_(asc|desc)$/', $order, $m)) {
                 // 如果字符串的开头是这 3 个字符串之一，说明是一个合法的排序值
-                if (in_array($m[1], ['title', 'type', 'location'])) {
+                if (in_array($m[1], ['title', 'type', 'location', 'stock'])) {
                     // 根据传入的排序值来构造排序参数
                     $builder->orderBy($m[1], $m[2]);
                 }
             }
         }
 
-        $products = $builder->paginate(16);
+        $products = $builder->paginate(10);
 
         return view('products.index', [
             'products' => $products,

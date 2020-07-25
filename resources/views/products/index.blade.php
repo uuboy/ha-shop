@@ -25,32 +25,63 @@
                                 <option value="type_desc">规格降序排列</option>
                                 <option value="location_asc">货架号升序排列</option>
                                 <option value="location_desc">货架号降序排列</option>
+                                <option value="stock_asc">库存升序排列</option>
+                                <option value="stock_desc">库存降序排列</option>
                             </select>
                         </div>
                     </div>
                 </form>
                 <!-- 筛选组件结束 -->
-                <div class="row products-list">
-                    @foreach($products as $product)
-                        <div class="col-3 product-item">
-                            <div class="product-content">
-                                <div class="top">
-                                    <div class="img">
-                                        <a href="{{ route('products.show', ['product' => $product->id]) }}">
-                                        </a>
-                                    </div>
-                                    <div class="price"><b>规格：</b>{{ $product->type }}</div>
-                                    <div class="title">
-                                        <a href="{{ route('products.show', ['product' => $product->id]) }}">{{ $product->title }}</a>
-                                    </div>
-                                </div>
-                                <div class="bottom">
-                                    <div class="sold_count">库存 <span>{{ $product->stock }}件</span></div>
-                                    <div class="review_count">货架号 <span>{{ $product->location }}</span></div>
-                                </div>
-                            </div>
+                <div class="row products-list mt-3">
+
+                        <div class="table-responsive-md col-12">
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <th class="text-center">
+                                        名称
+                                    </th>
+                                    <th class="text-center">
+                                        规格
+                                    </th>
+                                    <th class="text-center">
+                                        货架号
+                                    </th>
+                                    <th class="text-center">
+                                        库存
+                                    </th>
+                                    <th class="text-center">
+                                        操作
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    @foreach($products as $product)
+
+                                        <tr class="text-center" data-id="{{ $product->id }}">
+                                            <td>
+                                                <a href="{{ route('products.show', ['product' => $product->id]) }}" style="color: #333;">{{ $product->title }}</a>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('products.show', ['product' => $product->id]) }}" style="color: #333;">{{ $product->type }}</a>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('products.show', ['product' => $product->id]) }}" style="color: #333;">{{ $product->location }}</a>
+                                            </td>
+                                            <td>
+                                                @if($product->stock>0)
+                                                    <a href="{{ route('products.show', ['product' => $product->id]) }}" style="color: green;"><b>{{ $product->stock}}</b></a>
+                                                @else
+                                                    <a href="{{ route('products.show', ['product' => $product->id]) }}" style="color: red;"><b>{{ $product->stock}}</b></a>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm btn-add" type="button">加入清单</button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                    @endforeach
+
                 </div>
                 <div class="float-right">{{ $products->appends($filters)->render() }}</div>
             </div>
@@ -68,7 +99,40 @@
         $('.search-form select[name=order]').on('change', function() {
             $('.search-form').submit();
         });
-    })
+
+        $('.btn-add').click(function () {
+            // 请求加入购物车接口
+            var id = $(this).closest('tr').data('id');
+            axios.post('{{ route('cart.add') }}', {
+                product_id: id,
+                amount: 1,
+            })
+                .then(function () { // 请求成功执行此回调
+                    swal('加入购物车成功', '', 'success')
+                        .then(function() {
+                            location.href = '{{ route('cart.index') }}';
+                        });
+                }, function (error) { // 请求失败执行此回调
+                    if (error.response.status === 401) {
+                        // http 状态码为 401 代表用户未登陆
+                        swal('请先登录', '', 'error');
+                    } else if (error.response.status === 422) {
+                        // http 状态码为 422 代表用户输入校验失败
+                        var html = '<div>';
+                        _.each(error.response.data.errors, function (errors) {
+                            _.each(errors, function (error) {
+                                html += error+'<br>';
+                            })
+                        });
+                        html += '</div>';
+                        swal({content: $(html)[0], icon: 'error'})
+                    } else {
+                        // 其他情况应该是系统挂了
+                        swal('系统错误', '', 'error');
+                    }
+                })
+        });
+    });
 
 
 </script>

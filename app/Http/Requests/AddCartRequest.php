@@ -18,12 +18,6 @@ class AddCartRequest extends Request
                     if (!$product->on_sale) {
                         return $fail('该商品未上架');
                     }
-                    if ($product->stock === 0) {
-                        return $fail('该商品已售完');
-                    }
-                    if ($this->input('amount') > 0 && $product->stock < $this->input('amount')) {
-                        return $fail('该商品库存不足');
-                    }
                 },
             ],
             'amount' => ['required', 'integer', 'min:1'],

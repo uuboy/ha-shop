@@ -7,8 +7,9 @@ use Ramsey\Uuid\Uuid;
 
 class Order extends Model
 {
+
+
     const REFUND_STATUS_PENDING = 'pending';
-    const REFUND_STATUS_APPLIED = 'applied';
     const REFUND_STATUS_PROCESSING = 'processing';
     const REFUND_STATUS_SUCCESS = 'success';
     const REFUND_STATUS_FAILED = 'failed';
@@ -18,16 +19,15 @@ class Order extends Model
     const SHIP_STATUS_RECEIVED = 'received';
 
     public static $refundStatusMap = [
-        self::REFUND_STATUS_PENDING    => '未退款',
-        self::REFUND_STATUS_APPLIED    => '已申请退款',
-        self::REFUND_STATUS_PROCESSING => '退款中',
-        self::REFUND_STATUS_SUCCESS    => '退款成功',
-        self::REFUND_STATUS_FAILED     => '退款失败',
+        self::REFUND_STATUS_PENDING    => '未退货',
+        self::REFUND_STATUS_PROCESSING => '退货中',
+        self::REFUND_STATUS_SUCCESS    => '退货成功',
+        self::REFUND_STATUS_FAILED     => '退货失败',
     ];
 
     public static $shipStatusMap = [
         self::SHIP_STATUS_PENDING   => '未发货',
-        self::SHIP_STATUS_DELIVERED => '已发货',
+        self::SHIP_STATUS_DELIVERED => '送货中',
         self::SHIP_STATUS_RECEIVED  => '已收货',
     ];
 

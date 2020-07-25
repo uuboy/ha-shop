@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('type');
             $table->string('location');
             $table->boolean('on_sale')->default(true);
-            $table->unsignedBigInteger('stock')->default(0);
+            $table->BigInteger('stock')->default(0);
             $table->timestamps();
         });
     }

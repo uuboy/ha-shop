@@ -73,9 +73,12 @@
                                 <textarea name="remark" class="form-control" rows="3"></textarea>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <div class="offset-sm-3 col-sm-3">
                                 <button type="button" class="btn btn-primary btn-create-order">提交</button>
+                            </div>
+                            <div class="offset-sm-3 col-sm-3">
+                                <button type="button" class="btn btn-success btn-add">添加</button>
                             </div>
                         </div>
                     </form>
@@ -96,6 +99,9 @@
     $(document).ready(function () {
         $('#mySelect').select2();
         // 监听 移除 按钮的点击事件
+        $('.btn-add').click(function () {
+            location.href = '/products';
+        });
         $('.btn-remove').click(function () {
             // $(this) 可以获取到当前点击的 移除 按钮的 jQuery 对象
             // closest() 方法可以获取到匹配选择器的第一个祖先元素，在这里就是当前点击的 移除 按钮之上的 <tr> 标签
@@ -160,31 +166,44 @@
                     amount: $input.val(),
                 })
             });
-            axios.post('{{ route('orders.store') }}', req)
-                .then(function (response) {
-                    swal('订单提交成功', '', 'success')
-                        .then(() => {
-                            location.href = '/orders/' + response.data.id;
-                        });
-                }, function (error) {
-                    if (error.response.status === 422) {
-                        // http 状态码为 422 代表用户输入校验失败
-                        var html = '<div>';
-                        _.each(error.response.data.errors, function (errors) {
-                            _.each(errors, function (error) {
-                                html += error+'<br>';
-                            })
-                        });
-                        html += '</div>';
-                        swal({content: $(html)[0], icon: 'error'})
-                    } else if (error.response.status === 403) { // 这里判断状态 403
-                        swal(error.response.data.msg, '', 'error');
-                    } else {
-                        // 其他情况应该是系统挂了
-                        swal('系统错误', '', 'error');
+
+            swal({
+                title: "确认要提交该清单？",
+                icon: "info",
+                buttons: ['取消', '确定'],
+                dangerMode: true,
+            })
+                .then(function(willDelete) {
+                    // 用户点击 确定 按钮，willDelete 的值就会是 true，否则为 false
+                    if (!willDelete) {
+                        return;
                     }
+                    axios.post('{{ route('orders.store') }}', req)
+                        .then(function (response) {
+                            swal('订单提交成功', '', 'success')
+                                .then(() => {
+                                    location.href = '/orders/' + response.data.id;
+                                });
+                        }, function (error) {
+                            if (error.response.status === 422) {
+                                // http 状态码为 422 代表用户输入校验失败
+                                var html = '<div>';
+                                _.each(error.response.data.errors, function (errors) {
+                                    _.each(errors, function (error) {
+                                        html += error+'<br>';
+                                    })
+                                });
+                                html += '</div>';
+                                swal({content: $(html)[0], icon: 'error'})
+                            } else if (error.response.status === 403) { // 这里判断状态 403
+                                swal(error.response.data.msg, '', 'error');
+                            } else {
+                                // 其他情况应该是系统挂了
+                                swal('系统错误', '', 'error');
+                            }
+                        });
+                    });
                 });
-            });
-        });
+    });
 </script>
 @endsection

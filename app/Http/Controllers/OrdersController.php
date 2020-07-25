@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\OrderReviewed;
-use App\Exceptions\CouponCodeUnavailableException;
 use App\Exceptions\InvalidRequestException;
-use App\Http\Requests\ApplyRefundRequest;
 use App\Http\Requests\OrderRequest;
-use App\Http\Requests\SendReviewRequest;
-use App\Models\CouponCode;
 use App\Models\UserAddress;
 use App\Models\Order;
 use App\Services\OrderService;
@@ -19,10 +14,29 @@ class OrdersController extends Controller
 {
     public function index(Request $request)
     {
-        $orders = Order::query()
+
+        // 创建一个查询构造器
+        $builder = Order::query();
+        // 判断是否有提交 search 参数，如果有就赋值给 $search 变量
+        // search 参数用来模糊搜索商品
+        if ($search = $request->input('search', '')) {
+            $like = '%'.$search.'%';
+            // 模糊搜索商品标题、商品详情、SKU 标题、SKU描述
+            $builder->where(function ($query) use ($like) {
+                $query->where('no', 'like', $like)
+                    ->orWhere('address->address', 'like', $like)
+                    ->orWhere('address->contact_name', 'like', $like)
+                    ->orWhere('address->contact_phone', 'like', $like)
+                    ->orWhere('address->zip', 'like', $like)
+                    ->orWhere('remark', 'like', $like)
+                    ->orWhere('refund_no', 'like', $like)
+                    ->orWhere('ship_data->express_company', 'like', $like)
+                    ->orWhere('ship_data->express_no', 'like', $like);
+            });
+        }
+        $orders = $builder
             // 使用 with 方法预加载，避免N + 1问题
             ->with(['items.product'])
-            ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
@@ -33,45 +47,21 @@ class OrdersController extends Controller
     {
         $user    = $request->user();
         $address = UserAddress::find($request->input('address_id'));
-        // $coupon  = null;
-
-        // 如果用户提交了优惠码
-        // if ($code = $request->input('coupon_code')) {
-        //     $coupon = CouponCode::where('code', $code)->first();
-        //     if (!$coupon) {
-        //         throw new CouponCodeUnavailableException('优惠券不存在');
-        //     }
-        // }
-        // 参数中加入 $coupon 变量
         return $orderService->store($user, $address, $request->input('remark'), $request->input('items'), $request->input('is_out'));
     }
 
     public function show(Order $order, Request $request)
     {
-        $this->authorize('own', $order);
+        // $this->authorize('own', $order);
         return view('orders.show', ['order' => $order->load(['items.product'])]);
+        // dd($order);
     }
 
-    public function received(Order $order, Request $request)
-    {
-        // 校验权限
-        $this->authorize('own', $order);
-
-        // 判断订单的发货状态是否为已发货
-        if ($order->ship_status !== Order::SHIP_STATUS_DELIVERED) {
-            throw new InvalidRequestException('发货状态不正确');
-        }
-
-        // 更新发货状态为已收到
-        $order->update(['ship_status' => Order::SHIP_STATUS_RECEIVED]);
-
-        // 返回订单信息
-        return $order;
-    }
 
     public function close(Order $order, Request $request)
     {
-        $order->update(['closed' => true]);
+        if(!$order->closed){
+            $order->update(['closed' => true]);
             // 循环遍历订单中的商品 SKU，将订单中的数量加回到 库存中去
             if($order->is_out) {
                 foreach ($order->items as $item) {
@@ -82,14 +72,14 @@ class OrdersController extends Controller
                     $item->product->decreaseStock($item->amount);
                 }
             }
-
-
+        }
     }
 
     public function restore(Order $order, Request $request)
     {
-        $order->update(['closed' => false]);
-            // 循环遍历订单中的商品 SKU，将订单中的数量加回到 SKU 的库存中去
+        if($order->closed){
+            $order->update(['closed' => false]);
+            // 循环遍历订单中的商品 SKU，将订单中的数量加回到库存中去
             if($order->is_out) {
                 foreach ($order->items as $item) {
                     $item->product->decreaseStock($item->amount);
@@ -99,73 +89,102 @@ class OrdersController extends Controller
                     $item->product->addStock($item->amount);
                 }
             }
+        }
+
     }
 
-    public function review(Order $order)
+    public function ship(Order $order, Request $request)
     {
-        // 校验权限
-        $this->authorize('own', $order);
-        // 判断是否已经支付
-        if (!$order->paid_at) {
-            throw new InvalidRequestException('该订单未支付，不可评价');
-        }
-        // 使用 load 方法加载关联数据，避免 N + 1 性能问题
-        return view('orders.review', ['order' => $order->load(['items.productSku', 'items.product'])]);
-    }
 
-    public function sendReview(Order $order, SendReviewRequest $request)
-    {
-        // 校验权限
-        $this->authorize('own', $order);
-        if (!$order->paid_at) {
-            throw new InvalidRequestException('该订单未支付，不可评价');
+        // 判断当前订单发货状态是否为未发货
+        if ($order->ship_status !== Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单已发货');
         }
-        // 判断是否已经评价
-        if ($order->reviewed) {
-            throw new InvalidRequestException('该订单已评价，不可重复提交');
-        }
-        $reviews = $request->input('reviews');
-        // 开启事务
-        \DB::transaction(function () use ($reviews, $order) {
-            // 遍历用户提交的数据
-            foreach ($reviews as $review) {
-                $orderItem = $order->items()->find($review['id']);
-                // 保存评分和评价
-                $orderItem->update([
-                    'rating'      => $review['rating'],
-                    'review'      => $review['review'],
-                    'reviewed_at' => Carbon::now(),
-                ]);
-            }
-            // 将订单标记为已评价
-            $order->update(['reviewed' => true]);
-            event(new OrderReviewed($order));
-        });
-
-        return redirect()->back();
-    }
-
-    public function applyRefund(Order $order, ApplyRefundRequest $request)
-    {
-        // 校验订单是否属于当前用户
-        $this->authorize('own', $order);
-        // 判断订单是否已付款
-        if (!$order->paid_at) {
-            throw new InvalidRequestException('该订单未支付，不可退款');
-        }
-        // 判断订单退款状态是否正确
-        if ($order->refund_status !== Order::REFUND_STATUS_PENDING) {
-            throw new InvalidRequestException('该订单已经申请过退款，请勿重复申请');
-        }
-        // 将用户输入的退款理由放到订单的 extra 字段中
-        $extra                  = $order->extra ?: [];
-        $extra['refund_reason'] = $request->input('reason');
-        // 将订单退款状态改为已申请退款
+        // Laravel 5.5 之后 validate 方法可以返回校验过的值
+        $data = $this->validate($request, [
+            'express_company' => ['required'],
+            'express_no'      => ['required'],
+        ], [], [
+            'express_company' => '物流公司',
+            'express_no'      => '物流单号',
+        ]);
+        // 将订单发货状态改为已发货，并存入物流信息
         $order->update([
-            'refund_status' => Order::REFUND_STATUS_APPLIED,
-            'extra'         => $extra,
+            'ship_status' => Order::SHIP_STATUS_DELIVERED,
+            // 我们在 Order 模型的 $casts 属性里指明了 ship_data 是一个数组
+            // 因此这里可以直接把数组传过去
+            'ship_data'   => $data,
         ]);
 
-        return $order;
     }
+
+    public function refund(Order $order, Request $request)
+    {
+        if ($order->ship_status === Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单未发货');
+        }
+
+        if ($order->refund_status !== Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单已退货');
+        }
+
+        if ($order->closed == true) {
+            throw new InvalidRequestException('该订单已关闭');
+        }
+
+        $refundNo = Order::getAvailableRefundNo();
+
+        $order->update([
+            'refund_no' => $refundNo,
+            'refund_status' => Order::REFUND_STATUS_PROCESSING,
+        ]);
+
+    }
+
+
+    public function refund_success(Order $order, Request $request)
+    {
+        if ($order->ship_status === Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单未发货');
+        }
+
+        if ($order->refund_status === Order::REFUND_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单无退货编号');
+        }
+
+        if ($order->refund_status === Order::REFUND_STATUS_SUCCESS) {
+            throw new InvalidRequestException('该订单已退货');
+        }
+
+        if ($order->closed == true) {
+            throw new InvalidRequestException('该订单已关闭');
+        }
+
+        $order->update([
+            'refund_status' => Order::REFUND_STATUS_SUCCESS,
+        ]);
+
+        if($order->is_out) {
+            foreach ($order->items as $item) {
+                $item->product->addStock($item->amount);
+            }
+        } else {
+            foreach ($order->items as $item) {
+                $item->product->decreaseStock($item->amount);
+            }
+        }
+
+    }
+
+    public function received(Order $order, Request $request)
+    {
+        if ($order->ship_status !== Order::SHIP_STATUS_DELIVERED) {
+            throw new InvalidRequestException('该订单未送货');
+        }
+        $order->update([
+            'ship_status' => Order::SHIP_STATUS_RECEIVED,
+        ]);
+    }
+
+
 }
