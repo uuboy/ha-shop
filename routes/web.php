@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/products')->name('root');
 
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 // auth 中间件代表需要登录，verified中间件代表需要经过邮箱验证
 Route::group(['middleware' => 'auth'], function() {

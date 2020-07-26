@@ -27,7 +27,6 @@
                 <!-- 登录注册链接开始 -->
                 @guest
                     <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">登录</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">注册</a></li>
                 @else
                     <li class="nav-item">
                         <a class="nav-link mt-1 mr-4 {{ active_class(if_route('cart.index')) }}" href="{{ route('cart.index') }}"><i class="fa fa-shopping-cart"></i></a>

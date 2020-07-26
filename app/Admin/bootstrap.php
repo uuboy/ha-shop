@@ -19,3 +19,16 @@
  */
 
 Encore\Admin\Form::forget(['map']);
+
+use Encore\Admin\Facades\Admin;
+
+Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
+
+    $navbar->left('
+        <li class="nav-item ml-4">
+            <a class="nav-link" href="/">返回前台</a>
+        </li>
+    ');
+
+
+});
