@@ -60,7 +60,7 @@
                         <div class="form-group row">
                             <label class="col-form-label col-sm-3 text-md-right">选择对方单位</label>
                             <div class="col-sm-9 col-md-7">
-                                <select class="form-control" name="address" id='mySelect'>
+                                <select class="form-control selectpicker" name="address" id='mySelect' data-live-search="true">
                                     @foreach($addresses as $address)
                                         <option value="{{ $address->id }}">{{ $address->contact_name }} {{ $address->full_address }} {{ $address->contact_phone }}</option>
                                     @endforeach
@@ -91,13 +91,13 @@
 @endsection
 
 @section('style')
-<link href="{{ asset('select2/select2.min.css') }}" rel="stylesheet">
+<link href="{{ asset('bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet">
 @endsection
 @section('scriptsAfterJs')
-<script src="{{ asset('select2/select2.min.js') }}"></script>
+<script src="{{ asset('bootstrap-select/bootstrap-select.min.js') }}"></script>
 <script>
     $(document).ready(function () {
-        $('#mySelect').select2();
+        // $('#mySelect').select2();
         // 监听 移除 按钮的点击事件
         $('.btn-add').click(function () {
             location.href = '/products';

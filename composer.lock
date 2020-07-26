@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4493157c2b321e85e3a2662646d8748b",
+    "content-hash": "4801886c727d32b9163b2a547c2667eb",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1326,6 +1326,74 @@
                 "url"
             ],
             "time": "2019-07-01T23:21:34+00:00"
+        },
+        {
+            "name": "hieu-le/active",
+            "version": "7.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/letrunghieu/active.git",
+                "reference": "6996435d6996ba98e191e97d393de03ab8d25043"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/letrunghieu/active/zipball/6996435d6996ba98e191e97d393de03ab8d25043",
+                "reference": "6996435d6996ba98e191e97d393de03ab8d25043",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "laravel/framework": "^7.0",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^5.0",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "HieuLe\\Active\\ActiveServiceProvider"
+                    ],
+                    "aliases": {
+                        "Active": "HieuLe\\Active\\Facades\\Active"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "HieuLe\\Active\\": "src/",
+                    "HieuLe\\ActiveTest\\": "tests/"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hieu Le",
+                    "email": "letrunghieu.cse09@gmail.com",
+                    "homepage": "https://www.hieule.info"
+                }
+            ],
+            "description": "The helper class for Laravel applications to get active class base on current route",
+            "homepage": "https://www.hieule.info/tag/laravel-active/",
+            "keywords": [
+                "active",
+                "laravel",
+                "routing"
+            ],
+            "time": "2020-03-16T15:08:33+00:00"
         },
         {
             "name": "jxlwqq/quill",
@@ -2913,62 +2981,6 @@
                 "uuid"
             ],
             "time": "2020-03-29T20:13:32+00:00"
-        },
-        {
-            "name": "snapappointments/bootstrap-select",
-            "version": "v1.13.18",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/snapappointments/bootstrap-select.git",
-                "reference": "6c4c75f61e69ca54d5ab557a2b90ffdccf1c63cd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/snapappointments/bootstrap-select/zipball/6c4c75f61e69ca54d5ab557a2b90ffdccf1c63cd",
-                "reference": "6c4c75f61e69ca54d5ab557a2b90ffdccf1c63cd",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "suggest": {
-                "components/jquery": "1.9.1 - 3",
-                "twbs/bootstrap": ">=3.0.0"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Casey Holzer",
-                    "homepage": "https://github.com/caseyjhol"
-                },
-                {
-                    "name": "Silvio Moreto",
-                    "homepage": "https://github.com/silviomoreto"
-                },
-                {
-                    "name": "SnapAppointments, LLC",
-                    "homepage": "https://snapappointments.com"
-                }
-            ],
-            "description": "The jQuery plugin that brings select elements into the 21st century with intuitive multiselection, searching, and much more. Now with Bootstrap 4 support.",
-            "homepage": "https://developer.snapappointments.com/bootstrap-select",
-            "keywords": [
-                "bootstrap",
-                "dropdown",
-                "form",
-                "javascript",
-                "jquery",
-                "replacement",
-                "select"
-            ],
-            "time": "2020-06-26T18:04:14+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

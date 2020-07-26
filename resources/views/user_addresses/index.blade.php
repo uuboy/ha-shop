@@ -1,19 +1,19 @@
 @extends('layouts.app')
-@section('title', '收货地址列表')
+@section('title', '单位列表')
 
 @section('content')
     <div class="row">
         <div class="col-md-10 offset-md-1">
             <div class="card panel-default">
                 <div class="card-header">
-                    收货地址列表
-                    <a href="{{ route('user_addresses.create') }}" class="float-right">新增收货地址</a>
+                    单位列表
+                    <a href="{{ route('user_addresses.create') }}" class="float-right">新增单位（个人）</a>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th>收货人（单位）</th>
+                            <th>单位（个人）</th>
                             <th>地址</th>
                             <th>邮编</th>
                             <th>电话</th>

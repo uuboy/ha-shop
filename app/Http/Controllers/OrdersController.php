@@ -31,8 +31,27 @@ class OrdersController extends Controller
                     ->orWhere('remark', 'like', $like)
                     ->orWhere('refund_no', 'like', $like)
                     ->orWhere('ship_data->express_company', 'like', $like)
-                    ->orWhere('ship_data->express_no', 'like', $like);
+                    ->orWhere('ship_data->express_no', 'like', $like)
+                    ->orWhereHas('items.product', function ($query) use ($like) {
+                        $query->where('title', 'like', $like)
+                            ->orWhere('type', 'like', $like)
+                            ->orWhere('stock', 'like', $like)
+                            ->orWhere('location', 'like', $like);
+                    });
             });
+        }
+        if ($sort = $request->input('sort', '')) {
+
+            if($sort == 'order_out')
+            {
+                $builder->where('is_out', true);
+            }
+
+            if($sort == 'order_in')
+            {
+                $builder->where('is_out', false);
+            }
+
         }
         $orders = $builder
             // 使用 with 方法预加载，避免N + 1问题
@@ -40,7 +59,13 @@ class OrdersController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        return view('orders.index', ['orders' => $orders]);
+        return view('orders.index', [
+            'orders' => $orders,
+            'filters'  => [
+                'search' => $search,
+                'sort'  => $sort,
+            ],
+        ]);
     }
 
     public function store(OrderRequest $request, OrderService $orderService)

@@ -9,14 +9,14 @@
                 <!-- 筛选组件开始 -->
                 <form action="{{ route('products.index') }}" class="search-form">
                     <div class="form-row">
-                        <div class="col-md-9">
+                        <div class="col-md-9 mt-1">
                             <div class="form-row">
                                 <div class="col-6"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
                                 <div class="col-auto"><button class="btn btn-primary btn-sm">搜索</button></div>
                                 <div class="col-auto"><a href="{{ route('products.index') }}">清除</a></div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mt-1">
                             <select name="order" class="form-control form-control-sm float-right">
                                 <option value="">排序方式</option>
                                 <option value="title_asc">名称升序排列</option>
@@ -34,8 +34,8 @@
                 <!-- 筛选组件结束 -->
                 <div class="row products-list mt-3">
 
-                        <div class="table-responsive-md col-12">
-                            <table class="table">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
                                 <thead class="thead-light">
                                     <th class="text-center">
                                         名称
@@ -74,7 +74,12 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm btn-add" type="button">加入清单</button>
+                                                @if(boolval($user->favoriteProducts()->find($product->id)))
+                                                    <button class="btn btn-danger btn-disfavor btn-sm mt-1">取消收藏</button>
+                                                @else
+                                                    <button class="btn btn-success btn-favor btn-sm mt-1">❤ 收藏</button>
+                                                @endif
+                                                <button class="btn btn-primary btn-sm btn-add mt-1" type="button">加入清单</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -94,10 +99,52 @@
 <script>
     var filters = {!! json_encode($filters) !!};
     $(document).ready(function () {
+        var bootstrapButton = $.fn.button.noConflict(); // return $.fn.button to previously assigned value
+        $.fn.bootstrapBtn = bootstrapButton;            // give $().bootstrapBtn the Bootstrap functionality
+
         $('.search-form input[name=search]').val(filters.search);
         $('.search-form select[name=order]').val(filters.order);
         $('.search-form select[name=order]').on('change', function() {
             $('.search-form').submit();
+        });
+
+        // 监听收藏按钮的点击事件
+        $('.btn-favor').click(function () {
+            var id = $(this).closest('tr').data('id');
+            axios.post('/products/'+ id +'/favorite')
+                .then(function () {
+                    swal('操作成功', '', 'success')
+                        .then(function () {  // 这里加了一个 then() 方法
+                            location.reload();
+                        });
+                }, function(error) {
+                    if (error.response && error.response.status === 401) {
+                        swal('请先登录', '', 'error');
+                    }  else if (error.response && error.response.data.msg) {
+                        swal(error.response.data.msg, '', 'error');
+                    }  else {
+                        swal('系统错误', '', 'error');
+                    }
+                });
+        });
+
+        $('.btn-disfavor').click(function () {
+            var id = $(this).closest('tr').data('id');
+            axios.delete('/products/'+ id +'/favorite')
+                .then(function () {
+                    swal('操作成功', '', 'success')
+                        .then(function () {
+                            location.reload();
+                        });
+                 }, function(error) {
+                    if (error.response && error.response.status === 401) {
+                        swal('请先登录', '', 'error');
+                    }  else if (error.response && error.response.data.msg) {
+                        swal(error.response.data.msg, '', 'error');
+                    }  else {
+                        swal('系统错误', '', 'error');
+                    }
+                });
         });
 
         $('.btn-add').click(function () {

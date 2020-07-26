@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', ($address->id ? '修改': '新增') . '收货地址')
+@section('title', ($address->id ? '修改': '新增') . '单位（个人）')
 
 @section('content')
     <div class="row">
@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="text-center">
-                        {{ $address->id ? '修改': '新增' }}收货地址
+                        {{ $address->id ? '修改': '新增' }}单位（个人）
                     </h2>
                 </div>
                 <div class="card-body">
@@ -75,7 +75,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-form-label text-md-right col-sm-2">收货人(单位）</label>
+                                <label class="col-form-label text-md-right col-sm-2">单位（个人）</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="contact_name" value="{{ old('contact_name', $address->contact_name) }}">
                                 </div>

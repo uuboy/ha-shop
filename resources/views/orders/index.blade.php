@@ -18,16 +18,10 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <select name="order" class="form-control form-control-sm float-right">
-                                <option value="">排序方式</option>
-                                <option value="title_asc">名称升序排列</option>
-                                <option value="title_desc">名称降序排列</option>
-                                <option value="type_asc">规格升序排列</option>
-                                <option value="type_desc">规格降序排列</option>
-                                <option value="location_asc">货架号升序排列</option>
-                                <option value="location_desc">货架号降序排列</option>
-                                <option value="stock_asc">库存升序排列</option>
-                                <option value="stock_desc">库存降序排列</option>
+                            <select name="sort" class="form-control form-control-sm float-right">
+                                <option value="">全部类型</option>
+                                <option value="order_out">出库清单</option>
+                                <option value="order_in">入库清单</option>
                             </select>
                         </div>
                     </div>
@@ -126,7 +120,14 @@
 
 @section('scriptsAfterJs')
 <script>
+    var filters = {!! json_encode($filters) !!};
     $(document).ready(function () {
+
+        $('.search-form input[name=search]').val(filters.search);
+        $('.search-form select[name=sort]').val(filters.sort);
+        $('.search-form select[name=sort]').on('change', function() {
+            $('.search-form').submit();
+        });
         // 监听 移除 按钮的点击事件
         $('.btn-remove').click(function () {
             // $(this) 可以获取到当前点击的 移除 按钮的 jQuery 对象
