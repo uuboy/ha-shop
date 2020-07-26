@@ -10,8 +10,12 @@ Route::group([
     'middleware'    => config('admin.route.middleware'),
 ], function (Router $router) {
 
-    $router->get('/', 'HomeController@index')->name('admin.home');
+    $router->redirect('/', 'admin/products')->name('admin.home');
     $router->get('users', 'UsersController@index');
+    $router->post('users', 'UsersController@store');
+    $router->get('users/create', 'UsersController@create');
+    $router->get('users/{id}/edit', 'UsersController@edit');
+    $router->put('users/{id}', 'UsersController@update');
     $router->get('products', 'ProductsController@index');
     $router->get('products/create', 'ProductsController@create');
     $router->post('products', 'ProductsController@store');
@@ -26,5 +30,4 @@ Route::group([
     $router->get('coupon_codes/create', 'CouponCodesController@create');
     $router->get('coupon_codes/{id}/edit', 'CouponCodesController@edit');
     $router->put('coupon_codes/{id}', 'CouponCodesController@update');
-    $router->delete('coupon_codes/{id}', 'CouponCodesController@destroy');
 });

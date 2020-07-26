@@ -55,6 +55,7 @@
                         <div class="row"><div class="col-md-3 col-8 text-right">收货地址：</div><div class="col-md-9 col-10 offset-md-0 offset-2">{{ join(' ', $order->address) }}</div></div>
                         <div class="row"><div class="col-md-3 col-8 text-right">订单备注：</div><div class="col-md-9 col-10 offset-md-0 offset-2">{{ $order->remark ?: '-' }}</div></div>
                         <div class="row"><div class="col-md-3 col-8 text-right">订单编号：</div><div class="col-md-9 col-10 offset-md-0 offset-2">{{ $order->no }}</div></div>
+                        <div class="row"><div class="col-md-3 col-8 text-right">操作员：</div><div class="col-md-9 col-10 offset-md-0 offset-2">{{ $order->user->name }}</div></div>
                         <div class="order-express mt-4">
                             <div class="row"><div class="col-md-3 col-8 text-right"><b>物流状态：</b></div><div class="col-md-9 col-10 offset-md-0 offset-2">{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }}</div></div>
                             @if($order->ship_status === \App\Models\Order::SHIP_STATUS_DELIVERED || $order->ship_status === \App\Models\Order::SHIP_STATUS_RECEIVED)
@@ -109,7 +110,7 @@
                         <div class="container">
                             <div class="row justify-content-center align-items-center mt-5">
                                 <div class="col-12 text-center">
-                                    <h3 style="color: green;">已完成</h3>
+                                    <h3 style="color: green;">送货已完成</h3>
                                 </div>
                             </div>
                        </div>
@@ -118,6 +119,14 @@
                             <div class="row justify-content-center align-items-center mt-5">
                                 <div class="col-12 text-center">
                                     <h3 style="color: green;">退货已完成</h3>
+                                </div>
+                            </div>
+                       </div>
+                    @elseif($order->refund_status === \App\Models\Order::REFUND_STATUS_FAILED)
+                        <div class="container">
+                            <div class="row justify-content-center align-items-center mt-5">
+                                <div class="col-12 text-center">
+                                    <h3 style="color: red;">退货失败</h3>
                                 </div>
                             </div>
                        </div>
@@ -183,7 +192,7 @@
         $('#refund-btn').click(function () {
             axios.post('{{ route('orders.refund', $order->id) }}')
                 .then(function (response) {
-                    swal('退货成功', '', 'success')
+                    swal('退货进行中', '', 'success')
                         .then(() => {
                             location.reload();
                         });
@@ -211,6 +220,32 @@
             axios.post('{{ route('orders.refund.success', $order->id) }}')
                 .then(function (response) {
                     swal('退货成功', '', 'success')
+                        .then(() => {
+                            location.reload();
+                        });
+                }, function (error) {
+                    if (error.response.status === 422) {
+                        // http 状态码为 422 代表用户输入校验失败
+                        var html = '<div>';
+                        _.each(error.response.data.errors, function (errors) {
+                            _.each(errors, function (error) {
+                                html += error+'<br>';
+                            })
+                        });
+                        html += '</div>';
+                        swal({content: $(html)[0], icon: 'error'})
+                    } else if (error.response.status === 403) { // 这里判断状态 403
+                        swal(error.response.data.msg, '', 'error');
+                    } else {
+                        // 其他情况应该是系统挂了
+                        swal('系统错误', '', 'error');
+                    }
+            });
+        });
+        $('#refund-failed').click(function () {
+            axios.post('{{ route('orders.refund.fail', $order->id) }}')
+                .then(function (response) {
+                    swal('退货失败', '', 'danger')
                         .then(() => {
                             location.reload();
                         });

@@ -10,7 +10,7 @@ class UserAddressesController extends Controller
 {
     public function index(Request $request)
     {
-        $addresses = UserAddress::paginate(5);
+        $addresses = UserAddress::paginate(10);
         return view('user_addresses.index', compact('addresses'));
     }
 

@@ -16,7 +16,7 @@ class OrdersController extends AdminController
 {
     use ValidatesRequests;
 
-    protected $title = '订单';
+    protected $title = '流水单';
 
     protected function grid()
     {
@@ -53,7 +53,7 @@ class OrdersController extends AdminController
     public function show($id, Content $content)
     {
         return $content
-            ->header('查看订单')
+            ->header('查看流水单')
             // body 方法可以接受 Laravel 的视图作为参数
             ->body(view('admin.orders.show', ['order' => Order::find($id)]));
     }

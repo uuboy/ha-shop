@@ -13,22 +13,9 @@ class HomeController extends Controller
     public function index(Content $content)
     {
         return $content
-            ->title('Dashboard')
-            ->description('Description...')
-            ->row(Dashboard::title())
-            ->row(function (Row $row) {
+            ->title('辉昂仓库管理系统后台')
+            ->description('辉昂仓库管理系统后台')
+            ->row('<h1 class="text-center">欢迎来到辉昂仓库管理系统后台</h1>');
 
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::environment());
-                });
-
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::extensions());
-                });
-
-                $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::dependencies());
-                });
-            });
     }
 }

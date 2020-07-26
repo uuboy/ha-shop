@@ -74,10 +74,10 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="offset-sm-3 col-sm-3">
+                            <div class="offset-md-3 col-md-3 col-6">
                                 <button type="button" class="btn btn-primary btn-create-order">提交</button>
                             </div>
-                            <div class="offset-sm-3 col-sm-3">
+                            <div class="offset-md-3 col-md-3 col-6">
                                 <button type="button" class="btn btn-success btn-add">添加</button>
                             </div>
                         </div>

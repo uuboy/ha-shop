@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', '商品列表')
+@section('title', '货物列表')
 
 @section('content')
 <div class="row">
@@ -79,7 +79,7 @@
                                                 @else
                                                     <button class="btn btn-success btn-favor btn-sm mt-1">❤ 收藏</button>
                                                 @endif
-                                                <button class="btn btn-primary btn-sm btn-add mt-1" type="button">加入清单</button>
+                                                <button class="btn btn-primary btn-sm btn-add mt-1 ml-2" type="button">加入清单</button>
                                             </td>
                                         </tr>
                                     @endforeach

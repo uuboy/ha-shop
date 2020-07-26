@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Exports\ProductsExport;
 
 class ProductsController extends AdminController
 {
@@ -45,6 +46,18 @@ class ProductsController extends AdminController
             });
         });
 
+        $grid->filter(function($filter){
+
+            // 去掉默认的id过滤器
+            $filter->disableIdFilter();
+
+            // 在这里添加字段过滤器
+            $filter->like('title', '货品名称');
+            $filter->like('type', '货品规格');
+            $filter->like('location', '货架号');
+            $filter->like('stock', '库存数量');
+        });
+
         return $grid;
     }
 
@@ -70,17 +83,12 @@ class ProductsController extends AdminController
         // 创建一组单选框
         $form->radio('on_sale', '上架')->options(['1' => '是', '0'=> '否'])->default('1');
 
-        // 直接添加一对多的关联模型
-        // $form->hasMany('skus', 'SKU 列表', function (Form\NestedForm $form) {
-        //     $form->text('title', 'SKU 名称')->rules('required');
-        //     $form->text('description', 'SKU 描述')->rules('required');
-        //     $form->text('price', '单价')->rules('required|numeric|min:0.01');
-        //     $form->text('stock', '剩余库存')->rules('required|integer|min:0');
-        // });
 
 
 
 
         return $form;
     }
+
+
 }

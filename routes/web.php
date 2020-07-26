@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
     Route::post('orders/{order}/refund', 'OrdersController@refund')->name('orders.refund');
     Route::post('orders/{order}/refund_success', 'OrdersController@refund_success')->name('orders.refund.success');
+    Route::post('orders/{order}/refund_fail', 'OrdersController@refund_fail')->name('orders.refund.fail');
     Route::post('orders/{order}/received', 'OrdersController@received')->name('orders.received');
     Route::post('orders/{order}/close', 'OrdersController@close')->name('orders.close');
     Route::post('orders/{order}/restore', 'OrdersController@restore')->name('orders.restore');

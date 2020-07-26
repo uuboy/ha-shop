@@ -201,6 +201,30 @@ class OrdersController extends Controller
 
     }
 
+     public function refund_fail(Order $order, Request $request)
+    {
+        if ($order->ship_status === Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单未发货');
+        }
+
+        if ($order->refund_status === Order::REFUND_STATUS_PENDING) {
+            throw new InvalidRequestException('该订单无退货编号');
+        }
+
+        if ($order->refund_status === Order::REFUND_STATUS_SUCCESS) {
+            throw new InvalidRequestException('该订单已退货');
+        }
+
+        if ($order->closed == true) {
+            throw new InvalidRequestException('该订单已关闭');
+        }
+
+        $order->update([
+            'refund_status' => Order::REFUND_STATUS_FAILED,
+        ]);
+
+    }
+
     public function received(Order $order, Request $request)
     {
         if ($order->ship_status !== Order::SHIP_STATUS_DELIVERED) {

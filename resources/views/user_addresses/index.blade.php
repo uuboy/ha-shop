@@ -10,7 +10,7 @@
                     <a href="{{ route('user_addresses.create') }}" class="float-right">新增单位（个人）</a>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped table-sm table-responsive-md">
                         <thead>
                         <tr>
                             <th>单位（个人）</th>
@@ -28,9 +28,9 @@
                                 <td>{{ $address->zip }}</td>
                                 <td>{{ $address->contact_phone }}</td>
                                 <td>
-                                    <a href="{{ route('user_addresses.edit', ['user_address' => $address->id]) }}" class="btn btn-primary">修改</a>
+                                    <a href="{{ route('user_addresses.edit', ['user_address' => $address->id]) }}" class="btn btn-primary btn-sm">修改</a>
                                     <!-- 把之前删除按钮的表单替换成这个按钮，data-id 属性保存了这个地址的 id，在 js 里会用到 -->
-                                    <button class="btn btn-danger btn-del-address" type="button" data-id="{{ $address->id }}">删除</button>
+                                    <button class="btn btn-danger btn-del-address btn-sm" type="button" data-id="{{ $address->id }}">删除</button>
                                 </td>
                             </tr>
                         @endforeach

@@ -191,12 +191,12 @@ return [
     /*
      * 显示版本
      */
-    'show_version' => true,
+    'show_version' => false,
 
     /*
      * 显示环境
      */
-    'show_environment' => true,
+    'show_environment' => false,
 
     /*
      * 显示环境

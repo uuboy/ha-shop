@@ -10,14 +10,14 @@
                 <!-- 筛选组件开始 -->
                 <form action="{{ route('orders.index') }}" class="search-form">
                     <div class="form-row">
-                        <div class="col-md-9">
+                        <div class="col-md-9 mt-1">
                             <div class="form-row">
                                 <div class="col-6"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
                                 <div class="col-auto"><button class="btn btn-primary btn-sm">搜索</button></div>
                                 <div class="col-auto"><a href="{{ route('orders.index') }}">清除</a></div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mt-1">
                             <select name="sort" class="form-control form-control-sm float-right">
                                 <option value="">全部类型</option>
                                 <option value="order_out">出库清单</option>
@@ -37,7 +37,7 @@
 
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive-md">
+                                    <div class="table-responsive">
                                         <table class="table table-sm">
                                             <thead class="thead-light">
                                             <tr>
@@ -74,7 +74,7 @@
                                                             @elseif($order->refund_status !== \App\Models\Order::SHIP_STATUS_PENDING)
                                                                 <div style="color: red;">退货状态：{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}</div>
                                                             @else
-                                                                <div>物流状态：{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }} </div>
+                                                                <div style="color: green;">物流状态：{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }} </div>
                                                             @endif
                                                         </td>
                                                         <td rowspan="{{ count($order->items) }}" class="text-center">
@@ -97,8 +97,11 @@
                                                 </tr>
                                             @endforeach
                                                 <tr>
-                                                    <td colspan="6" class="text-center">
+                                                    <td colspan="5" class="text-center">
                                                         <b>对方单位：</b>{{ join(' ', $order->address) }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <b>操作员：</b>{{ $order->user->name }}
                                                     </td>
                                                 </tr>
                                                 <tr>
