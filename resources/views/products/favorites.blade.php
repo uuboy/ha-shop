@@ -9,14 +9,14 @@
                 <!-- 筛选组件开始 -->
                 <form action="{{ route('products.favorites') }}" class="search-form">
                     <div class="form-row">
-                        <div class="col-md-9">
+                        <div class="col-md-9 mt-1">
                             <div class="form-row">
                                 <div class="col-6"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
                                 <div class="col-auto"><button class="btn btn-primary btn-sm">搜索</button></div>
                                 <div class="col-auto"><a href="{{ route('products.favorites') }}">清除</a></div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mt-1">
                             <select name="order" class="form-control form-control-sm float-right">
                                 <option value="">排序方式</option>
                                 <option value="title_asc">名称升序排列</option>
@@ -35,7 +35,7 @@
                 <div class="row products-list mt-3">
 
                         <div class="table-responsive-md col-12">
-                            <table class="table">
+                            <table class="table table-sm">
                                 <thead class="thead-light">
                                     <th class="text-center">
                                         名称
@@ -75,11 +75,11 @@
                                             </td>
                                             <td>
                                                 @if(boolval($user->favoriteProducts()->find($product->id)))
-                                                    <button class="btn btn-danger btn-disfavor btn-sm">取消收藏</button>
+                                                    <button class="btn btn-danger btn-disfavor btn-sm mt-1">取消收藏</button>
                                                 @else
-                                                    <button class="btn btn-success btn-favor btn-sm">❤ 收藏</button>
+                                                    <button class="btn btn-success btn-favor btn-sm mt-1">❤ 收藏</button>
                                                 @endif
-                                                <button class="btn btn-primary btn-sm btn-add" type="button">加入清单</button>
+                                                <button class="btn btn-primary btn-sm btn-add mt-1 ml-2" type="button">加入清单</button>
                                             </td>
                                         </tr>
                                     @endforeach

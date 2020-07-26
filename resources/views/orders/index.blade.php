@@ -84,11 +84,11 @@
 
                                                             @if($order->closed)
                                                                 <div class="mt-2">
-                                                                    <button class="btn btn-success btn-sm btn-restore" type="button">订单恢复</button>
+                                                                    <button class="btn btn-success btn-sm btn-restore" type="button">恢复订单</button>
                                                                 </div>
                                                             @else
                                                                 <div class="mt-2">
-                                                                    <button class="btn btn-danger btn-sm btn-remove" type="button">订单关闭</button>
+                                                                    <button class="btn btn-danger btn-sm btn-remove" type="button">关闭订单</button>
                                                                 </div>
                                                             @endif
 
