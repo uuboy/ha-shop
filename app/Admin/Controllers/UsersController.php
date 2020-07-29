@@ -29,6 +29,7 @@ class UsersController extends AdminController
 
         $grid->actions(function ($actions) {
             $actions->disableView();
+            $actions->disableDelete();
         });
 
         $grid->filter(function($filter){
@@ -42,6 +43,10 @@ class UsersController extends AdminController
 
 
         });
+
+        $grid->disableExport();
+
+        $grid->disableRowSelector();
 
         return $grid;
     }

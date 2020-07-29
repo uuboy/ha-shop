@@ -78,7 +78,7 @@
                                 <button type="button" class="btn btn-primary btn-create-order">提交</button>
                             </div>
                             <div class="offset-md-3 col-md-3 col-6">
-                                <button type="button" class="btn btn-success btn-add">添加</button>
+                                <button type="button" class="btn btn-success btn-add">继续添加</button>
                             </div>
                         </div>
                     </form>

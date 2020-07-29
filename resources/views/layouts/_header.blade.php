@@ -12,13 +12,13 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ml-4">
-                    <a class="nav-link {{ active_class(if_route('products.index')) }}" href="{{ route('products.index') }}">货物</a>
+                    <a class="nav-link {{ active_class(if_route('products.index')) }}" href="{{ route('products.index') }}">货物管理</a>
                 </li>
                 <li class="nav-item ml-4">
-                    <a class="nav-link {{ active_class(if_route('orders.index')) }}" href="{{ route('orders.index') }}">流水单</a>
+                    <a class="nav-link {{ active_class(if_route('orders.index')) }}" href="{{ route('orders.index') }}">流水单管理</a>
                 </li>
                 <li class="nav-item ml-4">
-                    <a class="nav-link {{ active_class(if_route('user_addresses.index')) }}" href="{{ route('user_addresses.index') }}">单位</a>
+                    <a class="nav-link {{ active_class(if_route('user_addresses.index')) }}" href="{{ route('user_addresses.index') }}">往来单位</a>
                 </li>
             </ul>
 

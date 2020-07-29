@@ -29,8 +29,8 @@ class ProductsController extends AdminController
 
         $grid->title('货品名称')->sortable();
         $grid->type('货品规格')->sortable();
-        $grid->location('货架号')->sortable();
-        $grid->stock('库存数量')->sortable();
+        $grid->location('货架号')->sortable()->editable();
+        $grid->stock('库存数量')->sortable()->editable();
         $grid->on_sale('已上架')->display(function ($value) {
             return $value ? '是' : '否';
         });
@@ -57,6 +57,10 @@ class ProductsController extends AdminController
             $filter->like('location', '货架号');
             $filter->like('stock', '库存数量');
         });
+
+        $grid->disableExport();
+
+        // $grid->expandFilter();
 
         return $grid;
     }

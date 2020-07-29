@@ -75,7 +75,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-form-label text-md-right col-sm-2">单位（个人）</label>
+                                <label class="col-form-label text-md-right col-sm-2">单位（个人）名称</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="contact_name" value="{{ old('contact_name', $address->contact_name) }}">
                                 </div>
